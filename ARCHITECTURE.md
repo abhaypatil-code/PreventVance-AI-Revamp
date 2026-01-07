@@ -26,15 +26,21 @@ graph TD
 *   **Key Features**:
     *   **Admin Dashboard**: Patient registration, multi-disease assessment forms (Diabetes, Heart, Liver, Mental Health), and visualizations.
     *   **Patient Dashboard**: View personal health records and risk reports.
+    *   **API Integration**: Uses `api_client.py` as a centralized wrapper for HTTP requests to the backend, handling token management and error propagation.
     *   **State Management**: Handles user sessions and form data locally before submission.
 
 ### 2. Backend Layer
 *   **Technology**: Flask (Python)
 *   **Role**: Serves as the central API gateway.
-*   **Key Responsibilities**:
-    *   **Authentication**: JWT-based login and session management for Admins and Patients.
-    *   **Request Handling**: Validates input data from the frontend.
-    *   **Orchestration**: Coordinates between the Database, ML Engine, and External AI services.
+*   **Key Modules** (located in `app/api/`):
+    *   `auth.py`: JWT-based login for Admins and Patients.
+    *   `patients.py`: Patient CRUD operations.
+    *   `assessments.py`: Disease risk assessment endpoints.
+    *   `predict.py`: ML model inference triggers.
+    *   `dashboard.py`: Admin analytics and statistics.
+    *   `consultations.py`: Consultation scheduling and notes.
+    *   `recommendations.py`: Lifestyle recommendation retrieval.
+    *   `reports.py`: PDF report generation.
 
 ### 3. Data Storage
 *   **Technology**: SQLite (Development), SQLAlchemy ORM

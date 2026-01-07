@@ -52,13 +52,13 @@ The application will automatically:
 - Default API URL: `http://127.0.0.1:5000/api/v1`
 
 ## API Highlights
-- Auth: `/auth/admin/login`, `/auth/patient/login`, refresh, logout
-- Patients: create, list, view, update
-- Assessments: diabetes, liver, heart, mental_health
-- Predictions: trigger and fetch latest
-- Reports: PDF generation
-- Recommendations: Gemini AI (if configured)
-- Health: `/health`
+- **Auth**: `/auth/admin/login`, `/auth/patient/login`
+- **Patients**: `/patients` (Create, List, Update, View)
+- **Assessments**: `/patients/<id>/assessments/<type>`
+- **Predictions**: `/patients/<id>/predict`
+- **Reports**: `/patients/<id>/report/pdf`
+- **Consultations**: `/consultations`
+- **Recommendations**: `/patients/<id>/recommendations`
 
 ## Security
 - JWT with token blocklist
