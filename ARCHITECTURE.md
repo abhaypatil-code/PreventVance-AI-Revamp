@@ -1,206 +1,305 @@
 # PreventVance AI - System Architecture
 
-> **Comprehensive Technical Design Document**
+> **Technical Design Document**
 > *Version 2.0 | Last Updated: January 2026*
+
+---
 
 ## 1. Executive Summary
 
-**PreventVance AI** is a specialized healthcare analytics platform designed to empower healthcare workers in rural and resource-constrained environments. It enables the early detection of chronic diseases (Diabetes, Heart Disease, Liver Disease, Mental Health issues) using Machine Learning and provides personalized lifestyle recommendations via Generative AI.
+**PreventVance AI** is a healthcare analytics platform designed for rural healthcare workers. It enables early detection of chronic diseases—**Diabetes, Heart Disease, Liver Disease, and Mental Health issues**—using Machine Learning, and provides personalized lifestyle recommendations via Google Gemini AI.
 
-The system is built on a decoupled **Client-Server architecture**, featuring a responsive **Streamlit** frontend for interactive dashboards and a robust **Flask** backend for API management, ML inference, and data persistence.
+The system uses a decoupled **Client-Server architecture** with a **Streamlit** frontend and a **Flask** REST API backend.
 
 ---
 
 ## 2. High-Level Architecture
 
-### System Context Diagram (Level 0)
-This diagram illustrates the interactions between the primary users and external systems.
+### System Context Diagram
+This diagram shows the interactions between users, the system, and external services.
 
 ```mermaid
-C4Context
-    title System Context Diagram - PreventVance AI
-
-    Person(admin, "Healthcare Worker", "Registered medical staff who assesses patients and manages records.")
-    Person(patient, "Patient", "Individual receiving care and viewing their own health reports.")
-
-    System_Boundary(system, "PreventVance AI Platform") {
-        System(webapp, "Web Application", "Provides dashboards for assessment, reporting, and management.")
-    }
-
-    System_Ext(gemini, "Google Gemini AI", "Generates personalized lifestyle recommendations.")
-    
-    Rel(admin, webapp, " performs assessments, manages patients using", "HTTPS")
-    Rel(patient, webapp, " views health records using", "HTTPS")
-    Rel(webapp, gemini, " sends risk profiles / receives recommendations", "REST API")
-```
-
-### Container Architecture (Level 1)
-The high-level technical components and their responsibilities.
-
-```mermaid
-graph TD
-    subgraph "Client Layer"
-        Frontend[Streamlit Frontend]
-        style Frontend fill:#f9f,stroke:#333,stroke-width:2px
+flowchart TD
+    subgraph Users
+        Admin["👨‍⚕️ Healthcare Worker"]
+        Patient["👤 Patient"]
     end
 
-    subgraph "Server Layer"
-        API[Flask REST API]
-        style API fill:#bbf,stroke:#333,stroke-width:2px
-        
-        Auth[Auth Service]
-        ML[ML Inference Engine]
-        Recs[Recommendation Service]
+    subgraph "PreventVance AI Platform"
+        WebApp["🖥️ Web Application<br/>(Streamlit + Flask)"]
     end
 
-    subgraph "Data Layer"
-        DB[(SQLite / SQL DB)]
-        ModelStore["Model Store (.pkl)"]
+    subgraph "External Services"
+        Gemini["🤖 Google Gemini AI<br/>(Recommendations)"]
     end
 
-    subgraph "External"
-        GenAI[Gemini 2.0 Flash]
-    end
-
-    Frontend <-->|HTTP/JSON| API
-    API --> Auth
-    API --> ML
-    API --> Recs
-    
-    Auth --> DB
-    ML --> ModelStore
-    Recs --> GenAI
-    Recs --> DB
-    
-    API -->|CRUD| DB
+    Admin -->|"Registers patients,<br/>performs assessments"| WebApp
+    Patient -->|"Views health records,<br/>risk reports"| WebApp
+    WebApp <-->|"REST API<br/>(Risk Profile → Tips)"| Gemini
 ```
 
 ---
 
-## 3. Data Architecture (ER Diagram)
+### Container Architecture
+The high-level technical components and their responsibilities.
 
-The database schema is designed using **SQLAlchemy ORM** and enforces strict referential integrity. It supports users, patients, disease-specific assessments, predictions, and recommendations.
+```mermaid
+flowchart TB
+    subgraph "Client Layer"
+        FE["Streamlit Frontend<br/>(app.py, pages/)"]
+    end
+
+    subgraph "Server Layer"
+        API["Flask REST API<br/>(Blueprints)"]
+        Auth["Auth Service<br/>(JWT)"]
+        ML["ML Inference<br/>(services.py)"]
+        Recs["Recommendation<br/>Service"]
+    end
+
+    subgraph "Data Layer"
+        DB[("SQLite<br/>(medml.db)")]
+        Models["Model Store<br/>(.pkl files)"]
+    end
+
+    subgraph "External"
+        GenAI["Gemini 2.0 Flash"]
+    end
+
+    FE <-->|"HTTP/JSON"| API
+    API --> Auth
+    API --> ML
+    API --> Recs
+
+    Auth --> DB
+    ML --> Models
+    Recs --> GenAI
+    Recs --> DB
+    API -->|"CRUD"| DB
+```
+
+---
+
+## 3. Database Schema (ER Diagram)
+
+The database uses **SQLAlchemy ORM** with **SQLite**. Below is the entity-relationship diagram based on `models.py`.
 
 ```mermaid
 erDiagram
     User ||--o{ Patient : "registers"
-    User ||--o{ Consultation : "conducts"
-    
-    Patient ||--o{ DiabetesAssessment : "has history of"
-    Patient ||--o{ HeartAssessment : "has history of"
-    Patient ||--o{ LiverAssessment : "has history of"
-    Patient ||--o{ MentalHealthAssessment : "has history of"
-    
-    Patient ||--o{ RiskPrediction : "has results"
-    RiskPrediction ||--o{ LifestyleRecommendation : "triggers"
-    Patient ||--o{ LifestyleRecommendation : "receives"
-    
+    User ||--o{ Consultation : "books"
+    User ||--o{ ConsultationNote : "writes"
+
+    Patient ||--o{ DiabetesAssessment : "has"
+    Patient ||--o{ HeartAssessment : "has"
+    Patient ||--o{ LiverAssessment : "has"
+    Patient ||--o{ MentalHealthAssessment : "has"
+    Patient ||--o{ RiskPrediction : "has"
     Patient ||--o{ Consultation : "attends"
-    Patient ||--o{ ConsultationNote : "has notes"
+    Patient ||--o{ ConsultationNote : "has"
+    Patient ||--o{ LifestyleRecommendation : "receives"
+
+    RiskPrediction ||--o{ LifestyleRecommendation : "triggers"
 
     User {
         int id PK
-        string username
-        string role "Admin/Doctor"
+        string name
+        string email UK
+        string username UK
+        string password_hash
+        string role
+        string designation
         string facility_name
     }
 
     Patient {
         int id PK
-        string abha_id UK "Unique Health ID"
+        string abha_id UK
         string name
         int age
-        float bmi
+        string gender
+        float height
+        float weight
+        string state_name
+        int created_by_admin_id FK
+    }
+
+    DiabetesAssessment {
+        int id PK
+        int patient_id FK
+        bool pregnancy
+        float glucose
+        float blood_pressure
+        float skin_thickness
+        float insulin
+        bool diabetes_history
+        datetime assessed_at
+    }
+
+    HeartAssessment {
+        int id PK
+        int patient_id FK
+        bool diabetes
+        bool hypertension
+        bool smoking
+        float cholesterol_level
+        int systolic_bp
+        int diastolic_bp
+        bool family_history
+        datetime assessed_at
+    }
+
+    LiverAssessment {
+        int id PK
+        int patient_id FK
+        float total_bilirubin
+        float direct_bilirubin
+        float alkaline_phosphatase
+        float sgpt
+        float sgot
+        float total_protein
+        float albumin
+        datetime assessed_at
+    }
+
+    MentalHealthAssessment {
+        int id PK
+        int patient_id FK
+        int phq_score
+        int gad_score
+        bool depressiveness
+        bool suicidal
+        bool anxiousness
+        bool sleepiness
+        datetime assessed_at
     }
 
     RiskPrediction {
         int id PK
+        int patient_id FK
         float diabetes_risk_score
+        string diabetes_risk_level
         float heart_risk_score
+        string heart_risk_level
+        float liver_risk_score
+        string liver_risk_level
+        float mental_health_risk_score
+        string mental_health_risk_level
         string model_version
         datetime predicted_at
     }
 
     LifestyleRecommendation {
         int id PK
-        string category "Diet/Exercise/Sleep"
+        int patient_id FK
+        int prediction_id FK
+        string disease_type
         string risk_level
-        text content_hindi
-        text content_english
+        string category
+        text recommendation_text
+        string language
+        int priority
+        bool is_active
+    }
+
+    Consultation {
+        int id PK
+        int patient_id FK
+        int admin_id FK
+        string disease
+        string consultation_type
+        datetime consultation_datetime
+        string status
+    }
+
+    ConsultationNote {
+        int id PK
+        int patient_id FK
+        int admin_id FK
+        text notes
+        datetime created_at
     }
 ```
 
 ---
 
-## 4. Machine Learning & Recommendation Pipeline
+## 4. ML & Recommendation Pipeline
 
-The core intelligence of PreventVance AI involves a two-step process: **Predictive Analytics** (ML) followed by **Generative Guidance** (LLM).
-
-### Operational Workflow
+### Sequence Diagram
 
 ```mermaid
 sequenceDiagram
-    participant Admin as Healthcare Worker
-    participant FE as Frontend
-    participant API as Flask Backend
-    participant ML as ML Service
-    participant DB as Database
+    participant HW as Healthcare Worker
+    participant FE as Streamlit Frontend
+    participant API as Flask API
+    participant SVC as services.py
+    participant DB as SQLite
     participant LLM as Gemini AI
 
-    Note over Admin, FE: 1. Assessment
-    Admin->>FE: Fills Patient Form (e.g., Diabetes)
-    FE->>API: POST /api/v1/predict/diabetes (JSON)
+    HW->>FE: Submit Assessment Form
+    FE->>API: POST /api/v1/predict/{disease}
 
-    Note over API, ML: 2. Inference
-    API->>ML: Preprocess Data (Scale/Encode)
-    ML->>ML: Load LightGBM Model
-    ML->>ML: Generate Risk Probability
-    ML-->>API: Return Score (e.g., 0.85 - High)
+    API->>SVC: run_prediction(type, data)
+    SVC->>SVC: Preprocess (BMI, encoding)
+    SVC->>SVC: Load .pkl model
+    SVC->>SVC: predict_proba()
+    SVC-->>API: Risk Score (0.0 - 1.0)
 
-    Note over API, DB: 3. Persistence
-    API->>DB: Save Assessment & Risk Score
+    API->>DB: Save Assessment + RiskPrediction
 
-    Note over API, LLM: 4. Recommendation (Async/Triggered)
-    alt Risk Level > Medium
-        API->>LLM: Prompt: "Patient High Diabetic Risk. Give Diet/Exercise tips."
-        LLM-->>API: Return JSON {Category: "Diet", Tip: "Avoid white rice..."}
-        API->>DB: Save Personalized Recommendations
+    alt Risk >= Medium
+        API->>LLM: Generate recommendations prompt
+        LLM-->>API: JSON (Diet, Exercise tips)
+        API->>DB: Save LifestyleRecommendation
     end
 
-    API-->>FE: Return Risk Report & Tips
-    FE-->>Admin: Display Dashboard
+    API-->>FE: Return risk + recommendations
+    FE-->>HW: Display Dashboard
 ```
-
-### ML Models
-| Disease | Algorithm | Tuned Hyperparameters | Features |
-| :--- | :--- | :--- | :--- |
-| **Diabetes** | LightGBM (SMOTE) | `learning_rate`, `num_leaves` | Glucose, BP, BMI, Age, Insulin |
-| **Heart** | SVM (Weighted) | `kernel='rbf'`, `C` | Cholesterol, BP, Smoking, Age |
-| **Liver** | LightGBM | `max_depth` | Bilirubin, Enzymes (SGPT/SGOT), Protein |
-| **Mental Health** | Logistic Regression | `solver='liblinear'` | PHQ-9, GAD-7 Scores |
 
 ---
 
-## 5. Component Details
+### ML Models
+
+| Disease | Model File | Algorithm |
+|:--------|:-----------|:----------|
+| **Diabetes** | `diabetes_LightGBM SMOTE.pkl` | LightGBM with SMOTE |
+| **Heart** | `heart_SVM Weighted Tuned.pkl` | SVM (Weighted, Tuned) |
+| **Liver** | `liver_LightGBM SMOTE.pkl` | LightGBM with SMOTE |
+| **Mental Health** | `mental_health_depressiveness_Logistic Regression.pkl` | Logistic Regression |
+
+---
+
+## 5. Component Structure
 
 ### Frontend (`medml-frontend/`)
-*   **`app.py`**: Main entry point handling authentication routing.
-*   **`api_client.py`**: Singleton service wrapper for all Backend API calls. Manages JWT tokens.
-*   **`pages/`**:
-    *   `1_Patient_Dashboard.py`: Read-only view for patients.
-    *   `2_Admin_Dashboard.py`: Complex multi-tab interface for Registrations, Assessments, and Analytics.
+
+| File | Purpose |
+|:-----|:--------|
+| `app.py` | Main entry, login routing |
+| `api_client.py` | HTTP wrapper for backend API, JWT management |
+| `theme.py` | UI styling and theming |
+| `pages/1_Patient_Dashboard.py` | Patient read-only view |
+| `pages/2_Admin_Dashboard.py` | Admin multi-tab interface |
 
 ### Backend (`medml-backend/`)
-*   **`app/api/`**: Blueprints for distinct functional areas (`auth`, `patients`, `assessments`, `predict`).
-*   **`app/services.py`**:
-    *   **ML Loading**: Loads `.pkl` models into memory on startup.
-    *   **Preprocessing**: Handles feature engineering (e.g., BMI calc, One-Hot Encoding) ensuring training-inference consistency.
-    *   **Gemini Integration**: Manages prompts and JSON parsing for the LLM.
-*   **`app/models.py`**: Defines the data schema.
 
-## 6. Implementation & Deployment
-*   **Tech Stack**: Python 3.9+, Flask 2.0+, Streamlit, SQLAlchemy.
-*   **Environment**:
-    *   Models are stored locally in `models_store/`.
-    *   Environment variables manage secrets (`GEMINI_API_KEY`, `JWT_SECRET_KEY`).
-*   **Scalability**: The stateless Flask API allows for horizontal scaling behind a load balancer (e.g., Nginx) if needed.
+| Directory/File | Purpose |
+|:---------------|:--------|
+| `app/api/auth.py` | JWT authentication (Admin/Patient login) |
+| `app/api/patients.py` | Patient CRUD |
+| `app/api/assessments.py` | Disease assessment endpoints |
+| `app/api/predict.py` | ML prediction triggers |
+| `app/api/recommendations.py` | Gemini recommendation retrieval |
+| `app/api/reports.py` | PDF report generation |
+| `app/services.py` | ML loading, preprocessing, Gemini integration |
+| `app/models.py` | SQLAlchemy ORM models |
+| `models_store/` | Pre-trained `.pkl` model files |
+
+---
+
+## 6. Deployment
+
+- **Tech Stack**: Python 3.9+, Flask, Streamlit, SQLAlchemy, SQLite
+- **ML Libraries**: Scikit-Learn, LightGBM, XGBoost, Joblib
+- **Environment Variables**: `GEMINI_API_KEY`, `JWT_SECRET_KEY`
+- **Local Run**: `start.bat` (Windows) or `start.sh` (Linux/Mac)
