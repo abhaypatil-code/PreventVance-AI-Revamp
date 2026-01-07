@@ -236,7 +236,7 @@ def get_recommendations(patient_id):
         return response.json()
     except requests.exceptions.RequestException as e:
         st.error(f"Error fetching recommendations: {e}")
-        return {"diet": [], "exercise": [], "sleep": [], "lifestyle": []}
+        return None
 
 def get_pdf_report(patient_id, sections):
     """Downloads the patient report as a PDF."""
@@ -259,3 +259,15 @@ def share_patient_details(patient_id, sections):
     except requests.exceptions.RequestException as e:
         st.error(f"Error sharing details: {e}")
         return None
+
+def get_patient_consultations(patient_id):
+    """Fetches all consultations for a patient."""
+    try:
+        url = f"{BASE_URL}/consultations/patient/{patient_id}"
+        response = requests.get(url, headers=get_auth_headers())
+        response.raise_for_status()
+        data = response.json()
+        return data.get('consultations', [])
+    except requests.exceptions.RequestException as e:
+        # Silently fail - consultations are optional
+        return []

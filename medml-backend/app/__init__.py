@@ -3,12 +3,14 @@ import logging
 from logging.handlers import RotatingFileHandler
 import os
 from flask import Flask, jsonify
-from flask_migrate import Migrate
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from app.config import config
-from .extensions import db, jwt, bcrypt, cors, limiter # <-- ADDED limiter
+from .extensions import db, jwt, bcrypt, cors, limiter
 from .api import api_bp
 from . import services
-# from .db_seeder import seed_static_recommendations # <-- REMOVED
 
 def create_app(config_name='default'):
     app = Flask(__name__)
@@ -18,13 +20,17 @@ def create_app(config_name='default'):
     db.init_app(app)
     jwt.init_app(app)
     bcrypt.init_app(app)
-    # Configure CORS origins from env (comma-separated), default to "*" in dev
+    
+    # Configure CORS
     origins = os.environ.get('CORS_ORIGINS', '*')
     if isinstance(origins, str) and origins != '*':
         origins = [o.strip() for o in origins.split(',') if o.strip()]
     cors.init_app(app, resources={r"/api/*": {"origins": origins}})
-    limiter.init_app(app) # <-- ADDED limiter init
-    Migrate(app, db)
+    limiter.init_app(app)
+    
+    # Create DB tables if they don't exist
+    with app.app_context():
+        db.create_all()
     
     # --- Load ML Models ---
     with app.app_context():
@@ -45,11 +51,9 @@ def create_app(config_name='default'):
             pass
 
         services.load_models(app)
-        # seed_static_recommendations() # <-- REMOVED
-    # --- End ---
-
+    
     # Register Blueprints
-    app.register_blueprint(api_bp, url_prefix='/api/v1') # Updated to v1
+    app.register_blueprint(api_bp, url_prefix='/api/v1')
 
     # Import models to ensure they are registered
     from . import models
@@ -66,7 +70,6 @@ def create_app(config_name='default'):
         app.logger.addHandler(file_handler)
         app.logger.setLevel(logging.INFO)
         app.logger.info('MedML backend startup')
-    # --- End Logging ---
 
     # Global error handler for 500
     @app.errorhandler(500)
@@ -76,10 +79,9 @@ def create_app(config_name='default'):
     
     @app.errorhandler(404)
     def not_found_error(e):
-        # Use str(e) to get the default "Not Found" message or a custom one
         return jsonify(error="Not Found", message=str(e).replace("404 Not Found: ", "")), 404
 
-    # --- JWT Blocklist callback (DB-backed) ---
+    # --- JWT Callbacks ---
     from app.models import TokenBlocklist
     from flask_jwt_extended import JWTManager
 
@@ -91,20 +93,12 @@ def create_app(config_name='default'):
                 return False
             return db.session.query(TokenBlocklist.id).filter(TokenBlocklist.jti == jti).first() is not None
         except Exception:
-            # Fail closed: if error occurs, treat as revoked
             return True
 
-    # --- JWT Identity Callbacks for Dictionary Identities ---
     @jwt.user_identity_loader
     def user_identity_lookup(user):
-        """
-        Convert dictionary identity to string for JWT subject.
-        This allows us to use dictionary identities while maintaining JWT compatibility.
-        """
         if isinstance(user, dict):
-            # Convert dict to a string representation that can be parsed back
             return f"{user.get('id')}:{user.get('role')}:{user.get('name', '')}"
         return str(user)
-
 
     return app

@@ -65,11 +65,22 @@ def book_consultation():
 
 @api_bp.route('/consultations/patient/<int:patient_id>', methods=['GET'])
 @jwt_required()
-@admin_required
 def get_patient_consultations(patient_id):
     """
-    [Admin Only] Gets all consultations for a specific patient.
+    [Admin/Patient] Gets all consultations for a specific patient.
+    Patients can only access their own consultations.
     """
+    from .decorators import parse_jwt_identity
+    from .responses import forbidden
+    
+    jwt_identity = parse_jwt_identity()
+    user_role = jwt_identity.get('role')
+    user_id = jwt_identity.get('id')
+    
+    # Allow admin to access any patient, but patients can only access their own
+    if user_role == 'patient' and user_id != patient_id:
+        return forbidden("Patients can only access their own consultations")
+    
     patient = Patient.query.get_or_404(patient_id)
     consultations = [c.to_dict() for c in patient.consultations]
     return ok({"consultations": consultations})

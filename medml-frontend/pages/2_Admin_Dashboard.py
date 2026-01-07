@@ -71,14 +71,11 @@ if st.session_state.admin_view == "main":
     
     # Top Action Buttons
     st.subheader("🎯 Primary Actions")
-    col1, col2, col3 = st.columns([1, 1, 2])
+    col1, col2 = st.columns(2)
     with col1:
         st.button("➕ Register New Patient", on_click=set_view, args=("add_user",), use_container_width=True, type="primary")
     with col2:
         st.button("👥 View Patient Directory", on_click=set_view, args=("view_patients",), use_container_width=True, type="secondary")
-    with col3:
-        if st.button("Logout", use_container_width=True, type="secondary"):
-            utils.logout()
     
     st.divider()
     
@@ -245,8 +242,6 @@ elif st.session_state.admin_view == "add_user":
                     result = api_client.trigger_prediction(patient_id)
                 if result:
                     st.success(f"✅ Successfully added patient and triggered risk assessment!")
-                    st.balloons()
-                    time.sleep(2) # Give time for balloons
                     reset_add_user_flow()
                     st.rerun()
                 else:
@@ -359,15 +354,152 @@ elif st.session_state.admin_view == "add_user":
         render_assessment_form("Heart", fields, "heart", "❤️")
 
     if st.session_state.add_user_step == 'mental_health':
-        fields = [
-            ("phq_score", "number", {"min_value": 0, "max_value": 27, "step": 1, "label": "PHQ-9 Score (0-27)"}),
-            ("gad_score", "number", {"min_value": 0, "max_value": 21, "step": 1, "label": "GAD-7 Score (0-21)"}),
-            ("depressiveness", "bool", {"label": "Shows signs of Depressiveness"}),
-            ("suicidal", "bool", {"label": "Shows Suicidal Tendencies"}),
-            ("anxiousness", "bool", {"label": "Shows signs of Anxiousness"}),
-            ("sleepiness", "bool", {"label": "Reports excessive Sleepiness"})
+        st.header("Step 2: 🧠 Mental Health Assessment")
+        st.button("⬅️ Back to Assessment Hub", on_click=lambda: st.session_state.update(add_user_step=2))
+        
+        # Define PHQ-9 Questions (Simple Indian English)
+        phq_questions = [
+            "Not enjoying things you usually like to do",
+            "Feeling sad, low, or hopeless",
+            "Problem with sleep (difficulty sleeping, waking up often, or sleeping too much)",
+            "Feeling tired or having very little energy",
+            "Eating too little or eating too much",
+            "Feeling bad about yourself (Feeling like you are not good enough, a failure, or that you have disappointed your family)",
+            "Difficulty concentrating (For example, while reading, watching TV, or doing daily work)",
+            "Moving or speaking very slowly, so others notice OR feeling very restless and unable to sit still",
+            "Thoughts of harming yourself or feeling that life is not worth living"
         ]
-        render_assessment_form("Mental Health", fields, "mental_health", "🧠")
+        
+        # Define GAD-7 Questions (Simple Version)
+        gad_questions = [
+            "Feeling nervous, worried, or tense",
+            "Not able to stop worrying or control your worries",
+            "Worrying too much about many different things",
+            "Finding it hard to relax",
+            "Feeling so restless that you cannot sit quietly",
+            "Getting irritated or angry very easily",
+            "Feeling scared that something bad may happen"
+        ]
+        
+        # Answer options
+        answer_options = {
+            0: "Not at all",
+            1: "On some days",
+            2: "On many days",
+            3: "Almost every day"
+        }
+        
+        with st.form("mental_health_form"):
+            # PHQ-9 Section
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 1rem 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                <h4 style="margin: 0; font-size: 1.2rem;">📋 PHQ-9: Depression Screening</h4>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.95rem; opacity: 0.9;">During the last 2 weeks, how often have you had these problems?</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            phq_responses = []
+            for i, question in enumerate(phq_questions):
+                st.markdown(f"**{i+1}. {question}**")
+                response = st.radio(
+                    f"PHQ Question {i+1}",
+                    options=[0, 1, 2, 3],
+                    format_func=lambda x: answer_options[x],
+                    horizontal=True,
+                    key=f"phq_{i}",
+                    label_visibility="collapsed"
+                )
+                phq_responses.append(response)
+                if i < len(phq_questions) - 1:
+                    st.markdown("<hr style='margin: 0.5rem 0; border: none; border-top: 1px solid #eee;'>", unsafe_allow_html=True)
+            
+            st.divider()
+            
+            # GAD-7 Section
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); color: white; padding: 1rem 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                <h4 style="margin: 0; font-size: 1.2rem;">📋 GAD-7: Anxiety Screening</h4>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.95rem; opacity: 0.9;">In the last 2 weeks, how often have you felt troubled by these problems?</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            gad_responses = []
+            for i, question in enumerate(gad_questions):
+                st.markdown(f"**{i+1}. {question}**")
+                response = st.radio(
+                    f"GAD Question {i+1}",
+                    options=[0, 1, 2, 3],
+                    format_func=lambda x: answer_options[x],
+                    horizontal=True,
+                    key=f"gad_{i}",
+                    label_visibility="collapsed"
+                )
+                gad_responses.append(response)
+                if i < len(gad_questions) - 1:
+                    st.markdown("<hr style='margin: 0.5rem 0; border: none; border-top: 1px solid #eee;'>", unsafe_allow_html=True)
+            
+            st.divider()
+            
+            # Additional Observations Section
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; padding: 1rem 1.5rem; border-radius: 10px; margin-bottom: 1rem;">
+                <h4 style="margin: 0; font-size: 1.2rem;">👁️ Additional Clinical Observations</h4>
+                <p style="margin: 0.5rem 0 0 0; font-size: 0.95rem; opacity: 0.9;">Based on your interaction with the patient, check any applicable observations:</p>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            obs_col1, obs_col2 = st.columns(2)
+            with obs_col1:
+                depressiveness = st.checkbox("Shows signs of Depressiveness", key="obs_depressiveness")
+                suicidal = st.checkbox("Shows Suicidal Tendencies", key="obs_suicidal")
+            with obs_col2:
+                anxiousness = st.checkbox("Shows signs of Anxiousness", key="obs_anxiousness")
+                sleepiness = st.checkbox("Reports excessive Sleepiness", key="obs_sleepiness")
+            
+            st.divider()
+            
+            # Calculate and display scores
+            phq_score = sum(phq_responses)
+            gad_score = sum(gad_responses)
+            
+            score_col1, score_col2 = st.columns(2)
+            with score_col1:
+                phq_color = "#28a745" if phq_score < 5 else "#ffc107" if phq_score < 10 else "#fd7e14" if phq_score < 15 else "#dc3545"
+                st.markdown(f"""
+                <div style="background: {phq_color}; color: white; padding: 1rem; border-radius: 10px; text-align: center;">
+                    <h3 style="margin: 0;">PHQ-9 Score: {phq_score}/27</h3>
+                    <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem;">{'Minimal' if phq_score < 5 else 'Mild' if phq_score < 10 else 'Moderate' if phq_score < 15 else 'Moderately Severe' if phq_score < 20 else 'Severe'} Depression</p>
+                </div>
+                """, unsafe_allow_html=True)
+            with score_col2:
+                gad_color = "#28a745" if gad_score < 5 else "#ffc107" if gad_score < 10 else "#dc3545"
+                st.markdown(f"""
+                <div style="background: {gad_color}; color: white; padding: 1rem; border-radius: 10px; text-align: center;">
+                    <h3 style="margin: 0;">GAD-7 Score: {gad_score}/21</h3>
+                    <p style="margin: 0.25rem 0 0 0; font-size: 0.9rem;">{'Minimal' if gad_score < 5 else 'Mild' if gad_score < 10 else 'Moderate' if gad_score < 15 else 'Severe'} Anxiety</p>
+                </div>
+                """, unsafe_allow_html=True)
+            
+            st.markdown("<br>", unsafe_allow_html=True)
+            
+            submitted = st.form_submit_button("💾 Save Assessment", use_container_width=True, type="primary")
+            
+            if submitted:
+                form_data = {
+                    "phq_score": phq_score,
+                    "gad_score": gad_score,
+                    "depressiveness": depressiveness,
+                    "suicidal": suicidal,
+                    "anxiousness": anxiousness,
+                    "sleepiness": sleepiness
+                }
+                with st.spinner("Saving assessment..."):
+                    result = api_client.add_assessment(st.session_state.new_patient_id, "mental_health", form_data)
+                if result:
+                    st.toast("✅ Mental Health assessment saved!", icon="🧠")
+                    st.session_state.assessment_status["mental_health"] = True
+                    st.session_state.add_user_step = 2
+                    st.rerun()
 
 # --- View: Edit Patient ---
 elif st.session_state.admin_view == "edit_patient":
@@ -616,9 +748,14 @@ elif st.session_state.admin_view == "patient_detail":
                 with st.spinner(f"Booking consultation for {disease}..."):
                     res = api_client.book_consultation(patient_id, disease, level)
                     if res:
+                        consultation_data = res.get('consultation', {})
                         st.session_state.appointment_success = {
                             'disease': disease,
-                            'type': 'In-Person (High Risk)' if level == 'High' else 'Teleconsultation (Medium Risk)',
+                            'type': 'In-Person' if level == 'High' else 'Teleconsultation',
+                            'risk_level': level,
+                            'patient_name': patient_data.get('name', 'N/A'),
+                            'consultation_datetime': consultation_data.get('consultation_datetime', 'Within 7 days'),
+                            'doctor_name': 'Dr. Assigned Specialist',
                         }
                         st.session_state.show_appointment_modal = True
                     else:
@@ -658,7 +795,24 @@ elif st.session_state.admin_view == "patient_detail":
         if st.session_state.get('show_appointment_modal'):
             st.divider()
             success_data = st.session_state.get('appointment_success', {})
-            st.success(f"✅ Appointment Booked: {success_data.get('disease')} ({success_data.get('type')})")
+            
+            st.markdown("""
+            <div style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+                        color: white; padding: 1.5rem; border-radius: 12px; margin: 1rem 0;">
+                <h3 style="margin: 0;">✅ Consultation Booked Successfully!</h3>
+            </div>
+            """, unsafe_allow_html=True)
+            
+            col_modal1, col_modal2 = st.columns(2)
+            with col_modal1:
+                st.markdown(f"**🏥 Consultation Type:** {success_data.get('type')}")
+                st.markdown(f"**📅 Scheduled:** {success_data.get('consultation_datetime')}")
+                st.markdown(f"**🩺 Disease:** {success_data.get('disease')}")
+            with col_modal2:
+                st.markdown(f"**👤 Patient:** {success_data.get('patient_name')}")
+                st.markdown(f"**👨‍⚕️ Doctor:** {success_data.get('doctor_name')}")
+                st.markdown(f"**⚠️ Risk Level:** {success_data.get('risk_level')}")
+            
             if st.button("Close", key="close_modal_btn"):
                 st.session_state.show_appointment_modal = False
                 st.rerun()

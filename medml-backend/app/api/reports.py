@@ -266,6 +266,40 @@ def download_patient_report(patient_id):
             # Risk table for overview
             current_app.logger.info("Adding Risk Table...")
             pdf.risk_table(risk_prediction)
+            
+            # --- Added: High-Level Insights ---
+            pdf.ln(5)
+            pdf.set_font('Arial', 'B', 12)
+            pdf.cell(0, 8, 'Health Insights', 0, 1, 'L')
+            pdf.set_font('Arial', '', 10)
+            
+            insights = []
+            if risk_prediction:
+                risks = {
+                    "Diabetes": risk_prediction.diabetes_risk_level,
+                    "Liver Disease": risk_prediction.liver_risk_level,
+                    "Heart Disease": risk_prediction.heart_risk_level,
+                    "Mental Health": risk_prediction.mental_health_risk_level
+                }
+                high = [k for k,v in risks.items() if v == 'High']
+                medium = [k for k,v in risks.items() if v == 'Medium']
+                
+                if high:
+                    insights.append(f"URGENT: High risk indicators for {', '.join(high)}.")
+                if medium:
+                    insights.append(f"Monitor: Moderate risk indicators for {', '.join(medium)}.")
+                if not high and not medium and all(v is not None for v in risks.values()):
+                    insights.append("Great Job: Your health indicators are currently within a healthy range.")
+                
+                if patient.bmi and patient.bmi > 30:
+                     insights.append("BMI indicates obesity, which is a risk factor for multiple conditions.")
+            
+            if not insights:
+                insights.append("Complete your assessments to see health insights.")
+                
+            for insight in insights:
+                pdf.multi_cell(0, 5, "- " + insight, 0, 'L')
+            pdf.ln(5)
 
         # Optional disease-specific sections: render headers if selected
         section_map = [

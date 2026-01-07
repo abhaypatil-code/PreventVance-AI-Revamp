@@ -84,7 +84,7 @@ class Config:
         "Punjab": "Hindi",
         
         # West Indian States
-        "Maharashtra": "Hindi",  # Can be changed to Marathi if needed
+        "Maharashtra": "English",
         "Gujarat": "Hindi",  # Can be changed to Gujarati if needed
         "Goa": "Hindi",
         

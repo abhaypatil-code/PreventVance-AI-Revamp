@@ -89,6 +89,8 @@ else:
         # Backend status check
         if not check_backend_status():
             st.error("⚠️ **Backend Server Offline:** Cannot connect to the server at `http://127.0.0.1:5000`. Please ensure the backend is running.")
+            if st.button("🔄 Retry Connection"):
+                st.rerun()
             with st.expander("How to start the backend server"):
                 st.code("python medml-backend/run.py", language="bash")
             st.stop()
@@ -139,19 +141,19 @@ else:
             st.subheader("👤 Patient Login")
             
             with st.form("patient_login_form"):
-                abha_id = st.text_input("ABHA ID", placeholder="Enter 14-digit ABHA ID", max_chars=14, key="patient_abha")
+                abha_id = st.text_input("ABHA ID", placeholder="Enter your ABHA ID", key="patient_abha")
                 
                 submitted = st.form_submit_button("Login as Patient", use_container_width=True, type="primary")
                 
                 if submitted:
-                    if len(abha_id) != 14 or not abha_id.isdigit():
-                        st.error("ABHA ID must be exactly 14 digits.")
+                    if not abha_id or not abha_id.strip():
+                        st.error("Please enter your ABHA ID.")
                     else:
                         with st.spinner("Logging in..."):
-                            handle_patient_login(abha_id)
+                            handle_patient_login(abha_id.strip())
 
             with st.expander("Patient Information"):
-                st.info("Patients must be registered by a healthcare worker. Use your 14-digit ABHA ID to log in.")
+                st.info("Patients must be registered by a healthcare worker. Use your ABHA ID to log in.")
 
     # Footer
     st.markdown("---")
