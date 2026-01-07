@@ -1,0 +1,264 @@
+================================================================================
+                             MODEL TRAINING RESULTS                             
+                             LIVER DISEASE DATASET
+                             ================================================================================
+
+CONFIGURATION
+----------------------------------------
+Dataset:        Liver Disease
+Target Column:  Has_Liver_Disease
+Random Seed:    42
+Split Ratios:   70% Train / 15% Validation / 15% Test
+Optimization:   Threshold Tuning (Goal: Max J-Statistic)
+Timestamp:      2025-12-29 04:16:28
+
+================================================================================
+BEST MODEL: Voting MLP Ensemble (Test F1-Score: 0.6661)
+================================================================================
+
+================================================================================
+MODEL: MLP Classifier
+================================================================================
+
+Hyperparameters:
+----------------------------------------
+  activation: relu
+  alpha: 1e-05
+  batch_size: auto
+  beta_1: 0.9
+  beta_2: 0.999
+  early_stopping: True
+  epsilon: 1e-08
+  hidden_layer_sizes: (100,)
+  learning_rate: constant
+  learning_rate_init: 0.01
+  max_fun: 15000
+  max_iter: 1000
+  momentum: 0.9
+  n_iter_no_change: 10
+  nesterovs_momentum: True
+  power_t: 0.5
+  random_state: 42
+  shuffle: True
+  solver: adam
+  tol: 0.0001
+  validation_fraction: 0.1
+  verbose: False
+  warm_start: False
+  Optimal Threshold: 0.5877
+
+Validation Performance:
+----------------------------------------
+  Accuracy    : 0.7412
+  Precision   : 0.8052
+  Recall      : 0.7412
+  F1-Score    : 0.7536
+  TN          : 20.0000
+  FP          : 4.0000
+  FN          : 18.0000
+  TP          : 43.0000
+  Specificity : 0.8333
+  Sensitivity : 0.7049
+  AUC-ROC     : 0.8005
+
+Test Performance:
+----------------------------------------
+  Accuracy    : 0.6279
+  Precision   : 0.7421
+  Recall      : 0.6279
+  F1-Score    : 0.6438
+  TN          : 20.0000
+  FP          : 5.0000
+  FN          : 27.0000
+  TP          : 34.0000
+  Specificity : 0.8000
+  Sensitivity : 0.5574
+  AUC-ROC     : 0.7475
+
+Generated Plots:
+----------------------------------------
+  confusion_matrix: liver_disease_mlp_classifier_confusion_matrix.png
+  roc_curve: liver_disease_mlp_classifier_roc_curve.png
+
+
+================================================================================
+MODEL: Voting MLP Ensemble
+================================================================================
+
+Hyperparameters:
+----------------------------------------
+  estimators: [('mlp1', MLPClassifier(alpha=1e-05, early_stopping=True, learning_rate_init=0.01,
+              max_iter=1000, random_state=42)), ('mlp2', MLPClassifier(alpha=1e-05, early_stopping=True, learning_rate_init=0.01,
+              max_iter=1000, random_state=43)), ('mlp3', MLPClassifier(alpha=1e-05, early_stopping=True, learning_rate_init=0.01,
+              max_iter=1000, random_state=44)), ('mlp4', MLPClassifier(alpha=1e-05, early_stopping=True, learning_rate_init=0.01,
+              max_iter=1000, random_state=45)), ('mlp5', MLPClassifier(alpha=1e-05, early_stopping=True, learning_rate_init=0.01,
+              max_iter=1000, random_state=46))]
+  flatten_transform: True
+  n_jobs: None
+  verbose: False
+  voting: soft
+  weights: None
+  mlp1: MLPClassifier(alpha=1e-05, early_stopping=True, learning_rate_init=0.01,
+              max_iter=1000, random_state=42)
+  mlp2: MLPClassifier(alpha=1e-05, early_stopping=True, learning_rate_init=0.01,
+              max_iter=1000, random_state=43)
+  mlp3: MLPClassifier(alpha=1e-05, early_stopping=True, learning_rate_init=0.01,
+              max_iter=1000, random_state=44)
+  mlp4: MLPClassifier(alpha=1e-05, early_stopping=True, learning_rate_init=0.01,
+              max_iter=1000, random_state=45)
+  mlp5: MLPClassifier(alpha=1e-05, early_stopping=True, learning_rate_init=0.01,
+              max_iter=1000, random_state=46)
+  mlp1__activation: relu
+  mlp1__alpha: 1e-05
+  mlp1__batch_size: auto
+  mlp1__beta_1: 0.9
+  mlp1__beta_2: 0.999
+  mlp1__early_stopping: True
+  mlp1__epsilon: 1e-08
+  mlp1__hidden_layer_sizes: (100,)
+  mlp1__learning_rate: constant
+  mlp1__learning_rate_init: 0.01
+  mlp1__max_fun: 15000
+  mlp1__max_iter: 1000
+  mlp1__momentum: 0.9
+  mlp1__n_iter_no_change: 10
+  mlp1__nesterovs_momentum: True
+  mlp1__power_t: 0.5
+  mlp1__random_state: 42
+  mlp1__shuffle: True
+  mlp1__solver: adam
+  mlp1__tol: 0.0001
+  mlp1__validation_fraction: 0.1
+  mlp1__verbose: False
+  mlp1__warm_start: False
+  mlp2__activation: relu
+  mlp2__alpha: 1e-05
+  mlp2__batch_size: auto
+  mlp2__beta_1: 0.9
+  mlp2__beta_2: 0.999
+  mlp2__early_stopping: True
+  mlp2__epsilon: 1e-08
+  mlp2__hidden_layer_sizes: (100,)
+  mlp2__learning_rate: constant
+  mlp2__learning_rate_init: 0.01
+  mlp2__max_fun: 15000
+  mlp2__max_iter: 1000
+  mlp2__momentum: 0.9
+  mlp2__n_iter_no_change: 10
+  mlp2__nesterovs_momentum: True
+  mlp2__power_t: 0.5
+  mlp2__random_state: 43
+  mlp2__shuffle: True
+  mlp2__solver: adam
+  mlp2__tol: 0.0001
+  mlp2__validation_fraction: 0.1
+  mlp2__verbose: False
+  mlp2__warm_start: False
+  mlp3__activation: relu
+  mlp3__alpha: 1e-05
+  mlp3__batch_size: auto
+  mlp3__beta_1: 0.9
+  mlp3__beta_2: 0.999
+  mlp3__early_stopping: True
+  mlp3__epsilon: 1e-08
+  mlp3__hidden_layer_sizes: (100,)
+  mlp3__learning_rate: constant
+  mlp3__learning_rate_init: 0.01
+  mlp3__max_fun: 15000
+  mlp3__max_iter: 1000
+  mlp3__momentum: 0.9
+  mlp3__n_iter_no_change: 10
+  mlp3__nesterovs_momentum: True
+  mlp3__power_t: 0.5
+  mlp3__random_state: 44
+  mlp3__shuffle: True
+  mlp3__solver: adam
+  mlp3__tol: 0.0001
+  mlp3__validation_fraction: 0.1
+  mlp3__verbose: False
+  mlp3__warm_start: False
+  mlp4__activation: relu
+  mlp4__alpha: 1e-05
+  mlp4__batch_size: auto
+  mlp4__beta_1: 0.9
+  mlp4__beta_2: 0.999
+  mlp4__early_stopping: True
+  mlp4__epsilon: 1e-08
+  mlp4__hidden_layer_sizes: (100,)
+  mlp4__learning_rate: constant
+  mlp4__learning_rate_init: 0.01
+  mlp4__max_fun: 15000
+  mlp4__max_iter: 1000
+  mlp4__momentum: 0.9
+  mlp4__n_iter_no_change: 10
+  mlp4__nesterovs_momentum: True
+  mlp4__power_t: 0.5
+  mlp4__random_state: 45
+  mlp4__shuffle: True
+  mlp4__solver: adam
+  mlp4__tol: 0.0001
+  mlp4__validation_fraction: 0.1
+  mlp4__verbose: False
+  mlp4__warm_start: False
+  mlp5__activation: relu
+  mlp5__alpha: 1e-05
+  mlp5__batch_size: auto
+  mlp5__beta_1: 0.9
+  mlp5__beta_2: 0.999
+  mlp5__early_stopping: True
+  mlp5__epsilon: 1e-08
+  mlp5__hidden_layer_sizes: (100,)
+  mlp5__learning_rate: constant
+  mlp5__learning_rate_init: 0.01
+  mlp5__max_fun: 15000
+  mlp5__max_iter: 1000
+  mlp5__momentum: 0.9
+  mlp5__n_iter_no_change: 10
+  mlp5__nesterovs_momentum: True
+  mlp5__power_t: 0.5
+  mlp5__random_state: 46
+  mlp5__shuffle: True
+  mlp5__solver: adam
+  mlp5__tol: 0.0001
+  mlp5__validation_fraction: 0.1
+  mlp5__verbose: False
+  mlp5__warm_start: False
+  Optimal Threshold: 0.5682
+
+Validation Performance:
+----------------------------------------
+  Accuracy    : 0.7529
+  Precision   : 0.8229
+  Recall      : 0.7529
+  F1-Score    : 0.7650
+  TN          : 21.0000
+  FP          : 3.0000
+  FN          : 18.0000
+  TP          : 43.0000
+  Specificity : 0.8750
+  Sensitivity : 0.7049
+  AUC-ROC     : 0.8135
+
+Test Performance:
+----------------------------------------
+  Accuracy    : 0.6512
+  Precision   : 0.7664
+  Recall      : 0.6512
+  F1-Score    : 0.6661
+  TN          : 21.0000
+  FP          : 4.0000
+  FN          : 26.0000
+  TP          : 35.0000
+  Specificity : 0.8400
+  Sensitivity : 0.5738
+  AUC-ROC     : 0.7390
+
+Generated Plots:
+----------------------------------------
+  confusion_matrix: liver_disease_voting_mlp_ensemble_confusion_matrix.png
+  roc_curve: liver_disease_voting_mlp_ensemble_roc_curve.png
+
+
+================================================================================
+END OF REPORT
+================================================================================

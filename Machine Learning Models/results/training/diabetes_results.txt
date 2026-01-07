@@ -1,0 +1,205 @@
+================================================================================
+                             MODEL TRAINING RESULTS                             
+                               DIABETES DATASET
+                                ================================================================================
+
+CONFIGURATION
+----------------------------------------
+Dataset:        Diabetes
+Target Column:  Has_Diabetes
+Random Seed:    42
+Split Ratios:   70% Train / 15% Validation / 15% Test
+Timestamp:      2025-12-29 04:18:18
+
+================================================================================
+BEST MODEL: Logistic Regression (Test F1-Score: 0.7931)
+================================================================================
+
+================================================================================
+MODEL: Logistic Regression
+================================================================================
+
+Hyperparameters:
+----------------------------------------
+  C: 0.01
+  class_weight: balanced
+  dual: False
+  fit_intercept: True
+  intercept_scaling: 1
+  l1_ratio: None
+  max_iter: 1000
+  multi_class: deprecated
+  n_jobs: None
+  penalty: l2
+  random_state: 42
+  solver: lbfgs
+  tol: 0.0001
+  verbose: 0
+  warm_start: False
+
+Validation Performance:
+----------------------------------------
+  Accuracy    : 0.7043
+  Precision   : 0.7213
+  Recall      : 0.7043
+  F1-Score    : 0.7095
+  AUC-ROC     : 0.7870
+
+Test Performance:
+----------------------------------------
+  Accuracy    : 0.7931
+  Precision   : 0.7931
+  Recall      : 0.7931
+  F1-Score    : 0.7931
+  AUC-ROC     : 0.8686
+
+Generated Plots:
+----------------------------------------
+  confusion_matrix: diabetes_logistic_regression_confusion_matrix.png
+  roc_curve: diabetes_logistic_regression_roc_curve.png
+
+
+================================================================================
+MODEL: Random Forest
+================================================================================
+
+Hyperparameters:
+----------------------------------------
+  bootstrap: True
+  ccp_alpha: 0.0
+  class_weight: balanced
+  criterion: gini
+  max_depth: 10
+  max_features: sqrt
+  max_leaf_nodes: None
+  max_samples: None
+  min_impurity_decrease: 0.0
+  min_samples_leaf: 1
+  min_samples_split: 5
+  min_weight_fraction_leaf: 0.0
+  monotonic_cst: None
+  n_estimators: 100
+  n_jobs: -1
+  oob_score: False
+  random_state: 42
+  verbose: 0
+  warm_start: False
+
+Validation Performance:
+----------------------------------------
+  Accuracy    : 0.7565
+  Precision   : 0.7633
+  Recall      : 0.7565
+  F1-Score    : 0.7590
+  AUC-ROC     : 0.8433
+
+Test Performance:
+----------------------------------------
+  Accuracy    : 0.7672
+  Precision   : 0.7627
+  Recall      : 0.7672
+  F1-Score    : 0.7634
+  AUC-ROC     : 0.8403
+
+Generated Plots:
+----------------------------------------
+  confusion_matrix: diabetes_random_forest_confusion_matrix.png
+  roc_curve: diabetes_random_forest_roc_curve.png
+
+
+================================================================================
+MODEL: Gradient Boosting
+================================================================================
+
+Hyperparameters:
+----------------------------------------
+  ccp_alpha: 0.0
+  criterion: friedman_mse
+  init: None
+  learning_rate: 0.1
+  loss: log_loss
+  max_depth: 3
+  max_features: None
+  max_leaf_nodes: None
+  min_impurity_decrease: 0.0
+  min_samples_leaf: 1
+  min_samples_split: 2
+  min_weight_fraction_leaf: 0.0
+  n_estimators: 100
+  n_iter_no_change: None
+  random_state: 42
+  subsample: 1.0
+  tol: 0.0001
+  validation_fraction: 0.1
+  verbose: 0
+  warm_start: False
+
+Validation Performance:
+----------------------------------------
+  Accuracy    : 0.7478
+  Precision   : 0.7464
+  Recall      : 0.7478
+  F1-Score    : 0.7471
+  AUC-ROC     : 0.8393
+
+Test Performance:
+----------------------------------------
+  Accuracy    : 0.7500
+  Precision   : 0.7447
+  Recall      : 0.7500
+  F1-Score    : 0.7364
+  AUC-ROC     : 0.8026
+
+Generated Plots:
+----------------------------------------
+  confusion_matrix: diabetes_gradient_boosting_confusion_matrix.png
+  roc_curve: diabetes_gradient_boosting_roc_curve.png
+
+
+================================================================================
+MODEL: Support Vector Machine
+================================================================================
+
+Hyperparameters:
+----------------------------------------
+  C: 10.0
+  break_ties: False
+  cache_size: 200
+  class_weight: balanced
+  coef0: 0.0
+  decision_function_shape: ovr
+  degree: 3
+  gamma: auto
+  kernel: rbf
+  max_iter: -1
+  probability: True
+  random_state: 42
+  shrinking: True
+  tol: 0.001
+  verbose: False
+
+Validation Performance:
+----------------------------------------
+  Accuracy    : 0.7391
+  Precision   : 0.7552
+  Recall      : 0.7391
+  F1-Score    : 0.7436
+  AUC-ROC     : 0.8227
+
+Test Performance:
+----------------------------------------
+  Accuracy    : 0.7586
+  Precision   : 0.7562
+  Recall      : 0.7586
+  F1-Score    : 0.7572
+  AUC-ROC     : 0.8172
+
+Generated Plots:
+----------------------------------------
+  confusion_matrix: diabetes_support_vector_machine_confusion_matrix.png
+  roc_curve: diabetes_support_vector_machine_roc_curve.png
+
+
+================================================================================
+END OF REPORT
+================================================================================

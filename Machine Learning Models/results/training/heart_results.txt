@@ -1,0 +1,205 @@
+================================================================================
+                             MODEL TRAINING RESULTS                             
+                             HEART DISEASE DATASET
+                             ================================================================================
+
+CONFIGURATION
+----------------------------------------
+Dataset:        Heart Disease
+Target Column:  Has_Heart_Disease
+Random Seed:    42
+Split Ratios:   70% Train / 15% Validation / 15% Test
+Timestamp:      2025-12-29 04:18:05
+
+================================================================================
+BEST MODEL: Random Forest (Test F1-Score: 0.7711)
+================================================================================
+
+================================================================================
+MODEL: Logistic Regression
+================================================================================
+
+Hyperparameters:
+----------------------------------------
+  C: 0.1
+  class_weight: balanced
+  dual: False
+  fit_intercept: True
+  intercept_scaling: 1
+  l1_ratio: None
+  max_iter: 2000
+  multi_class: deprecated
+  n_jobs: None
+  penalty: l2
+  random_state: 42
+  solver: lbfgs
+  tol: 0.0001
+  verbose: 0
+  warm_start: False
+
+Validation Performance:
+----------------------------------------
+  Accuracy    : 0.7660
+  Precision   : 0.7903
+  Recall      : 0.7660
+  F1-Score    : 0.7729
+  AUC-ROC     : 0.8507
+
+Test Performance:
+----------------------------------------
+  Accuracy    : 0.7540
+  Precision   : 0.7778
+  Recall      : 0.7540
+  F1-Score    : 0.7611
+  AUC-ROC     : 0.8335
+
+Generated Plots:
+----------------------------------------
+  confusion_matrix: heart_disease_logistic_regression_confusion_matrix.png
+  roc_curve: heart_disease_logistic_regression_roc_curve.png
+
+
+================================================================================
+MODEL: Random Forest
+================================================================================
+
+Hyperparameters:
+----------------------------------------
+  bootstrap: True
+  ccp_alpha: 0.0
+  class_weight: balanced
+  criterion: gini
+  max_depth: 10
+  max_features: sqrt
+  max_leaf_nodes: None
+  max_samples: None
+  min_impurity_decrease: 0.0
+  min_samples_leaf: 2
+  min_samples_split: 5
+  min_weight_fraction_leaf: 0.0
+  monotonic_cst: None
+  n_estimators: 200
+  n_jobs: -1
+  oob_score: False
+  random_state: 42
+  verbose: 0
+  warm_start: False
+
+Validation Performance:
+----------------------------------------
+  Accuracy    : 0.7820
+  Precision   : 0.7824
+  Recall      : 0.7820
+  F1-Score    : 0.7822
+  AUC-ROC     : 0.8413
+
+Test Performance:
+----------------------------------------
+  Accuracy    : 0.7740
+  Precision   : 0.7692
+  Recall      : 0.7740
+  F1-Score    : 0.7711
+  AUC-ROC     : 0.8206
+
+Generated Plots:
+----------------------------------------
+  confusion_matrix: heart_disease_random_forest_confusion_matrix.png
+  roc_curve: heart_disease_random_forest_roc_curve.png
+
+
+================================================================================
+MODEL: Gradient Boosting
+================================================================================
+
+Hyperparameters:
+----------------------------------------
+  ccp_alpha: 0.0
+  criterion: friedman_mse
+  init: None
+  learning_rate: 0.1
+  loss: log_loss
+  max_depth: 3
+  max_features: None
+  max_leaf_nodes: None
+  min_impurity_decrease: 0.0
+  min_samples_leaf: 1
+  min_samples_split: 2
+  min_weight_fraction_leaf: 0.0
+  n_estimators: 200
+  n_iter_no_change: None
+  random_state: 42
+  subsample: 1.0
+  tol: 0.0001
+  validation_fraction: 0.1
+  verbose: 0
+  warm_start: False
+
+Validation Performance:
+----------------------------------------
+  Accuracy    : 0.7840
+  Precision   : 0.7746
+  Recall      : 0.7840
+  F1-Score    : 0.7743
+  AUC-ROC     : 0.8382
+
+Test Performance:
+----------------------------------------
+  Accuracy    : 0.7713
+  Precision   : 0.7597
+  Recall      : 0.7713
+  F1-Score    : 0.7568
+  AUC-ROC     : 0.8168
+
+Generated Plots:
+----------------------------------------
+  confusion_matrix: heart_disease_gradient_boosting_confusion_matrix.png
+  roc_curve: heart_disease_gradient_boosting_roc_curve.png
+
+
+================================================================================
+MODEL: Support Vector Machine
+================================================================================
+
+Hyperparameters:
+----------------------------------------
+  C: 1.0
+  break_ties: False
+  cache_size: 200
+  class_weight: balanced
+  coef0: 0.0
+  decision_function_shape: ovr
+  degree: 3
+  gamma: auto
+  kernel: rbf
+  max_iter: -1
+  probability: True
+  random_state: 42
+  shrinking: True
+  tol: 0.001
+  verbose: False
+
+Validation Performance:
+----------------------------------------
+  Accuracy    : 0.7707
+  Precision   : 0.7936
+  Recall      : 0.7707
+  F1-Score    : 0.7772
+  AUC-ROC     : 0.8478
+
+Test Performance:
+----------------------------------------
+  Accuracy    : 0.7513
+  Precision   : 0.7748
+  Recall      : 0.7513
+  F1-Score    : 0.7584
+  AUC-ROC     : 0.8287
+
+Generated Plots:
+----------------------------------------
+  confusion_matrix: heart_disease_support_vector_machine_confusion_matrix.png
+  roc_curve: heart_disease_support_vector_machine_roc_curve.png
+
+
+================================================================================
+END OF REPORT
+================================================================================
