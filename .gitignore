@@ -1,0 +1,61 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.mypy_cache/
+
+# Flask & Streamlit
+instance/
+.webassets-cache
+.flaskenv
+.streamlit/secrets.toml
+
+# Virtual Environment
+venv/
+.venv/
+env/
+ENV/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Project Specific
+medml-backend/medml.db
+medml-backend/.env
+# Keep the models if they are tracked, but often large files are ignored or tracked via LFS.
+# For now, we assume models in models_store are part of the repo or handled separately.
+# If database is dev-only/sqlite, ignore it.
+*.db
+*.sqlite3

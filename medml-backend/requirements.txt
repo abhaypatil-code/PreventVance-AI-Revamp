@@ -1,0 +1,19 @@
+Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-JWT-Extended
+Flask-Bcrypt
+Flask-Cors
+python-dotenv
+pydantic
+pydantic[email]
+SQLAlchemy
+scikit-learn
+pandas
+joblib
+xgboost
+lightgbm
+imbalanced-learn
+fpdf
+Flask-Limiter
+google-generativeai # <-- ADDED for Gemini recommendations
